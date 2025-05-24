@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+</head>
+<body>
+<h2>로그인</h2>
+
+<form action="/login" method="post">
+    <label for="id">아이디:</label><br>
+    <input type="text" id="id" name="id" required><br><br>
+
+    <label for="password">비밀번호:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <input type="checkbox" id="rememberMe" name="rememberMe">
+    <label for="rememberMe">로그인 상태 유지</label><br><br>
+
+    <button type="submit">로그인</button>
+</form>
+
+<br>
+
+<button onclick="location.href='/join.html'">회원가입</button>
+<button onclick="location.href='/changeCredentials.html'">아이디/비밀번호 변경</button>
+</body>
+</html>
