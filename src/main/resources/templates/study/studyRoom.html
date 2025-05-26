@@ -1,10 +1,54 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <title>스터디 후기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .study-card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .study-title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .study-user {
+            font-size: 14px;
+            color: gray;
+        }
+        .study-content {
+            margin-top: 10px;
+        }
+        .write-btn {
+            float: right;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+<h2>스터디 후기 목록</h2>
 
+<button class="write-btn" onclick="location.href='/write'">후기 작성</button>
+
+<div>
+    <div th:if="${#lists.isEmpty(studies)}">
+        <p>아직 작성된 후기가 없습니다.</p>
+    </div>
+
+    <div th:each="study : ${studies}" class="study-card">
+        <div class="study-title" th:text="${study.title}">제목</div>
+        <div class="study-user" th:text="'작성자: ' + ${study.user.nickname}">작성자</div>
+        <div class="study-content" th:text="${study.content}">내용</div>
+    </div>
+</div>
 </body>
 </html>

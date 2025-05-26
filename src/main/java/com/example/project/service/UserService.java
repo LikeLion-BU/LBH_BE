@@ -13,4 +13,7 @@ public interface UserService {
 
     //로그인 시 아이디,비번 확인
     Optional<User> login(String userId, String password);
+
+    // 추가: userId로 회원 조회
+    Optional<User> findByUserId(String userId);
 }
