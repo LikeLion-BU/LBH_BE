@@ -1,6 +1,9 @@
 package com.example.project.controller;
 
+import com.example.project.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import com.example.project.entity.Study;
 import com.example.project.entity.User;
@@ -8,8 +11,7 @@ import com.example.project.service.StudyService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyController {
 
+    private final UserService userService;
     private final StudyService studyService;
 
     @GetMapping("/studyRoom")
@@ -35,14 +38,49 @@ public class StudyController {
         return "study/studyRoom"; //
     }
 
+//    @PostMapping("/review")
+//    public String showReviewPage(HttpSession session, Model model) {
+//        User loginUser = (User) session.getAttribute("loginUser");
+//        if (loginUser == null) {
+//            return "redirect:/login";
+//        }
+//
+//        // 필요한 데이터를 모델에 담기
+//        model.addAttribute("nickname", loginUser.getNickname());
+//        return "review"; // templates/review.html
+//    }
 
-    @GetMapping("/write")
-    public String showWriteForm(HttpSession session) {
-        if (session.getAttribute("loginUser") == null) {
-            return "redirect:/login";
+
+//    @GetMapping("/write")
+//    public String showWriteForm() {
+//        return "study/write";  // 세션 검사 제거
+//    }
+//
+//    @PostMapping("/write")
+//    public String submitReview(@RequestParam String title,
+//                               @RequestParam String content,
+//                               HttpSession session) {
+//        User user = (User) session.getAttribute("loginUser");
+//        studyService.saveReview(title, content, user);
+//        return "redirect:/studyRoom";
+//    }
+
+    @PostMapping("/write")
+    public ResponseEntity<?> submitReview(@RequestParam String title,
+                                          @RequestParam String content,
+                                          HttpSession session) {
+        User user = (User) session.getAttribute("loginUser");
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 
-        return "study/write";
+        try {
+            studyService.saveReview(title, content, user);
+            return ResponseEntity.ok("리뷰 등록 성공");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록 실패");
+        }
     }
 
 }

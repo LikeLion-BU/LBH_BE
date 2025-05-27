@@ -12,4 +12,13 @@ public interface StudyService {
 
     // 유저별 작성한 Study 목록 조회
     List<Study> getStudiesByUser(User user);
+
+    void saveReview(String title, String content, User user);
+
+    User findByUser(String userId);
+
+    // 전체 후기 목록 조회용 메서드 추가
+    List<Study> findAll();
 }
+
+

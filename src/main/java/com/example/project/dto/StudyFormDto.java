@@ -1,8 +1,12 @@
 package com.example.project.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Getter
+@Setter
 public class StudyFormDto {
 
     private Long userSequence;

@@ -2,53 +2,102 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>스터디 후기</title>
+    <title>스터디 후기 목록</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 포함 -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
-        h2 {
-            margin-bottom: 20px;
-        }
-        .study-card {
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .study-title {
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .study-user {
-            font-size: 14px;
-            color: gray;
-        }
-        .study-content {
-            margin-top: 10px;
-        }
-        .write-btn {
-            float: right;
-            margin-bottom: 20px;
-        }
+        .modal { display: none; position: fixed; background: #fff; padding: 20px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
+
 <h2>스터디 후기 목록</h2>
 
-<button class="write-btn" onclick="location.href='/write'">후기 작성</button>
+<!-- 모달 열기 버튼 -->
+<button id="openReviewModalBtn">후기 작성하기</button>
 
-<div>
+<!-- 후기 목록 영역 -->
+<div id="reviewListContainer">
     <div th:if="${#lists.isEmpty(studies)}">
         <p>아직 작성된 후기가 없습니다.</p>
     </div>
 
-    <div th:each="study : ${studies}" class="study-card">
-        <div class="study-title" th:text="${study.title}">제목</div>
-        <div class="study-user" th:text="'작성자: ' + ${study.user.nickname}">작성자</div>
-        <div class="study-content" th:text="${study.content}">내용</div>
+    <div th:each="study : ${studies}">
+        <hr>
+        <h3 th:text="${study.title}">제목</h3>
+        <p><strong th:text="'작성자: ' + ${study.user.nickname}">작성자</strong></p>
+        <p th:text="${study.content}">내용</p>
     </div>
 </div>
+
+<!-- 리뷰 작성 모달 -->
+<div id="reviewModal" class="modal">
+    <h2>리뷰 작성</h2>
+    <input type="text" id="reviewTitle" placeholder="제목">
+    <br>
+    <textarea id="reviewContent" placeholder="내용"></textarea>
+    <br>
+    <button id="submitReviewBtn">작성</button>
+</div>
+
+<!-- 스크립트는 항상 body 끝에 -->
+<script>
+    // 모달 열기
+    $('#openReviewModalBtn').on('click', function () {
+        $('#reviewModal').show();
+    });
+
+    // 리뷰 작성 후 Ajax로 서버 전송
+    $('#submitReviewBtn').on('click', function () {
+        const title = $('#reviewTitle').val();
+        const content = $('#reviewContent').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/write',
+            data: { title, content },
+            success: function () {
+                alert('리뷰가 등록되었습니다.');
+                $('#reviewModal').hide();
+                $('#reviewTitle').val('');
+                $('#reviewContent').val('');
+                refreshReviewList(); // 목록 갱신
+            },
+            error: function (xhr) {
+                alert('등록 실패: ' + xhr.responseText);
+            }
+        });
+    });
+
+    // 리뷰 목록 갱신
+    function refreshReviewList() {
+        $.ajax({
+            url: '/reviews',
+            type: 'GET',
+            success: function (data) {
+                let container = $('#reviewListContainer');
+                container.empty();
+
+                if (data.length === 0) {
+                    container.append('<p>아직 작성된 후기가 없습니다.</p>');
+                } else {
+                    data.forEach(study => {
+                        container.append(`
+                            <hr>
+                            <h3>${study.title}</h3>
+                            <p><strong>작성자: ${study.user.nickname}</strong></p>
+                            <p>${study.content}</p>
+                        `);
+                    });
+                }
+            }
+        });
+    }
+
+    // 페이지 진입 시 후기 목록 갱신 (선택)
+    $(document).ready(function () {
+        refreshReviewList();
+    });
+</script>
+
 </body>
 </html>

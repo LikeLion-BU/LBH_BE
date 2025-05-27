@@ -40,5 +40,23 @@ public class StudyServiceImpl implements StudyService {
     public List<Study> getStudiesByUser(User user) {
         return studyRepository.findByUser(user); // 유저별 Study 조회
     }
+
+    public void saveReview(String title, String content, User user) {
+        Study study = new Study();
+        study.setTitle(title);
+        study.setContent(content);
+        study.setUser(user);
+        studyRepository.save(study);
+    }
+    @Override
+    public User findByUser(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
+    }
+
+    @Override
+    public List<Study> findAll() {
+        return studyRepository.findAll();
+    }
 }
 
