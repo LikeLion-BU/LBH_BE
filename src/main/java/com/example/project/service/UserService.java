@@ -1,8 +1,10 @@
 package com.example.project.service;
 
 import com.example.project.dto.JoinFormDto;
+import com.example.project.entity.Study;
 import com.example.project.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -16,4 +18,5 @@ public interface UserService {
 
     // 추가: userId로 회원 조회
     Optional<User> findByUserId(String userId);
+
 }

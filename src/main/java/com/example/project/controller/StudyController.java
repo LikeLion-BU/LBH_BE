@@ -38,39 +38,13 @@ public class StudyController {
         return "study/studyRoom"; //
     }
 
-//    @PostMapping("/review")
-//    public String showReviewPage(HttpSession session, Model model) {
-//        User loginUser = (User) session.getAttribute("loginUser");
-//        if (loginUser == null) {
-//            return "redirect:/login";
-//        }
-//
-//        // 필요한 데이터를 모델에 담기
-//        model.addAttribute("nickname", loginUser.getNickname());
-//        return "review"; // templates/review.html
-//    }
-
-
-//    @GetMapping("/write")
-//    public String showWriteForm() {
-//        return "study/write";  // 세션 검사 제거
-//    }
-//
-//    @PostMapping("/write")
-//    public String submitReview(@RequestParam String title,
-//                               @RequestParam String content,
-//                               HttpSession session) {
-//        User user = (User) session.getAttribute("loginUser");
-//        studyService.saveReview(title, content, user);
-//        return "redirect:/studyRoom";
-//    }
 
     @PostMapping("/write")
     public ResponseEntity<?> submitReview(@RequestParam String title,
                                           @RequestParam String content,
                                           HttpSession session) {
         User user = (User) session.getAttribute("loginUser");
-
+        log.info(String.valueOf(user));
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }

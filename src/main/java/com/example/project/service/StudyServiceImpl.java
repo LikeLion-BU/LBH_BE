@@ -7,6 +7,7 @@ import com.example.project.repository.StudyRepository;
 import com.example.project.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class StudyServiceImpl implements StudyService {
 
     @Autowired
@@ -46,6 +48,7 @@ public class StudyServiceImpl implements StudyService {
         study.setTitle(title);
         study.setContent(content);
         study.setUser(user);
+        log.info(String.valueOf(study));
         studyRepository.save(study);
     }
     @Override

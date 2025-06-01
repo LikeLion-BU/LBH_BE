@@ -30,8 +30,8 @@ public class ApiStudyController {
         String userId = requestData.get("userId");
         String title = requestData.get("title");
         String content = requestData.get("content");
-
         Optional<User> userOptional = userService.findByUserId(userId);
+        log.info(String.valueOf(userOptional));
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 사용자입니다.");
         }

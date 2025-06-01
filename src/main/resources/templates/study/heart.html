@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Heart Page</title>
+    <link rel="stylesheet" href="/css/heart.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav_logo">
+        <a href="/"><img src="/image/logo.png" alt="Logo"></a>
+    </div>
+    <div class="nav_menu">
+        <a href="/review">Study</a>
+        <a href="/heart">Heart Pop</a>
+        <a href="/contributors">Contributors</a>
+        <a href="/login"><button class="nav_btn">로그인</button></a>
+    </div>
+</nav>
+
+<section class="top">
+    <p class="orange-text">백대 멋사, 맘에 들면 하트를 꾸욱 눌러주세요!</p>
+    <p class="bold">하트를 누를수록 우리 사이는 더 가까워져요</p>
+</section>
+
+<!-- 콘텐츠 영역 -->
+<div class="content">
+    <h2>하트 메시지 남기기</h2>
+    <!-- POST로 HeartController에 content를 전달 -->
+    <form action="/heart" method="post">
+        <input type="text" name="content" placeholder="하트 내용을 입력하세요" required>
+        <button type="submit">하트 등록</button>
+    </form>
+<div></div>
+    <h3>하트 목록</h3>
+    <ul>
+        <th:block th:each="heart : ${heartList}">
+            <li th:text="${heart.heartContent}"></li>
+        </th:block>
+    </ul>
+</div>
+
+</body>
+</html>
