@@ -41,16 +41,10 @@ public class StudyController {
 
     @PostMapping("/write")
     public ResponseEntity<?> submitReview(@RequestParam String title,
-                                          @RequestParam String content,
-                                          HttpSession session) {
-        User user = (User) session.getAttribute("loginUser");
-        log.info(String.valueOf(user));
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
+                                          @RequestParam String content) {
         try {
-            studyService.saveReview(title, content, user);
+            // 로그인 사용자 없이 익명으로 저장 (user는 null)
+            studyService.saveReview(title, content, null);
             return ResponseEntity.ok("리뷰 등록 성공");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록 실패");

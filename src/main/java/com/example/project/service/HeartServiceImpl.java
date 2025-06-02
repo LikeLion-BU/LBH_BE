@@ -31,4 +31,15 @@ public class HeartServiceImpl implements HeartService {
     public List<Heart> findAll() {
         return heartRepository.findAll();
     }
+
+    @Override
+    public void incrementLikeCountOfLatest() {
+        List<Heart> hearts = heartRepository.findAll();
+        if (hearts.isEmpty()) {
+            throw new IllegalStateException("등록된 하트가 없습니다.");
+        }
+        Heart latestHeart = hearts.get(hearts.size() - 1); // 가장 마지막 하트
+        latestHeart.setLikeCount(latestHeart.getLikeCount() + 1);
+        heartRepository.save(latestHeart);
+    }
 }

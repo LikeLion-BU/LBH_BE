@@ -17,7 +17,7 @@ public class ApiHeartController {
 
     private final HeartService heartService;
 
-    //  1. 하트 등록 API
+    // 1. 하트 등록 API
     @PostMapping("/heartWrite")
     public ResponseEntity<?> writeHeart(@RequestBody Map<String, String> requestData) {
         String content = requestData.get("content");
@@ -37,5 +37,63 @@ public class ApiHeartController {
     public ResponseEntity<List<Heart>> getHeartList() {
         List<Heart> heartList = heartService.findAll();
         return ResponseEntity.ok(heartList);
+    }
+
+    // 3. 전체 하트 좋아요 수 합계 조회 API
+    @GetMapping("/heartCount/total")
+    public ResponseEntity<?> getTotalHeartCount() {
+        int total = heartService.findAll()
+                .stream()
+                .mapToInt(Heart::getLikeCount)
+                .sum();
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("count", total);
+        return ResponseEntity.ok(result);
+    }
+
+    // 4. 하트 하나의 likeCount 증가 API
+    @PostMapping("/heartCount")
+    public ResponseEntity<?> clickHeart() {
+        try {
+            List<Heart> hearts = heartService.findAll();
+
+            // 없으면 새로 생성
+            if (hearts.isEmpty()) {
+                Heart heart = new Heart();
+                heart.setLikeCount(1);
+                heartService.saveHeart(heart);
+            } else {
+                heartService.incrementLikeCountOfLatest();
+            }
+
+            int total = heartService.findAll()
+                    .stream()
+                    .mapToInt(Heart::getLikeCount)
+                    .sum();
+
+            Map<String, Integer> result = new HashMap<>();
+            result.put("count", total);
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("오류: " + e.getMessage());
+        }
+    }
+
+    // 5. 가장 마지막으로 등록된 하트의 ID 조회 API
+    @GetMapping("/heartLastId")
+    public ResponseEntity<?> getLastHeartId() {
+        List<Heart> hearts = heartService.findAll();
+        if (hearts.isEmpty()) {
+            return ResponseEntity.badRequest().body("등록된 하트가 없습니다.");
+        }
+
+        // Heart 엔티티에서 기본키는 heartSequence이므로, 그걸 반환
+        Long lastId = hearts.get(hearts.size() - 1).getHeartSequence();
+
+        Map<String, Long> result = new HashMap<>();
+        result.put("heartId", lastId);
+        return ResponseEntity.ok(result);
     }
 }

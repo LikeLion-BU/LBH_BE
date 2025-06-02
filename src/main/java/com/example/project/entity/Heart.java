@@ -23,5 +23,6 @@ public class Heart {
     @JoinColumn(name = "USER_SEQUENCE") // FK 컬럼
     private User user;
     private String heartContent;
+    private int likeCount;
 }
 

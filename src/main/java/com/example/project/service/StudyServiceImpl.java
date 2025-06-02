@@ -8,7 +8,6 @@ import com.example.project.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.List;
 @Slf4j
 public class StudyServiceImpl implements StudyService {
 
-    @Autowired
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;
 
@@ -39,18 +37,15 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public List<Study> getStudiesByUser(User user) {
-        return studyRepository.findByUser(user); // 유저별 Study 조회
-    }
-
     public void saveReview(String title, String content, User user) {
         Study study = new Study();
         study.setTitle(title);
         study.setContent(content);
-        study.setUser(user);
+        study.setUser(user); // user가 null일 수 있음
         log.info(String.valueOf(study));
         studyRepository.save(study);
     }
+
     @Override
     public User findByUser(String userId) {
         return userRepository.findByUserId(userId)
@@ -59,7 +54,13 @@ public class StudyServiceImpl implements StudyService {
 
     @Override
     public List<Study> findAll() {
+
         return studyRepository.findAll();
+    }
+
+    @Override
+    public List<Study> getStudiesByUser(User user) {
+        return studyRepository.findByUser(user);
     }
 }
 

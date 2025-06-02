@@ -10,4 +10,6 @@ public interface HeartService {
 
     List<Heart> findAll();
 
+    void incrementLikeCountOfLatest();
+
 }

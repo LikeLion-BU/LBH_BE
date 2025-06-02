@@ -8,17 +8,16 @@ import com.example.project.entity.User;
 import java.util.List;
 
 public interface StudyService {
-    void Studysave(StudyFormDto studyFormDto);
 
-    // 유저별 작성한 Study 목록 조회
-    List<Study> getStudiesByUser(User user);
+    void Studysave(StudyFormDto studyFormDto);
 
     void saveReview(String title, String content, User user);
 
     User findByUser(String userId);
 
-    // 전체 후기 목록 조회용 메서드 추가
     List<Study> findAll();
+
+    List<Study> getStudiesByUser(User user); // 이거 추가
 }
 
 
