@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.dto.JoinFormDto;
+import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
 import com.example.project.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -54,9 +55,21 @@ public class UserController {
 
     // 폼 제출 처리
     @PostMapping("/join")
-    public String joinAction(@ModelAttribute("joinFormDto") JoinFormDto joinFormDto, BindingResult bindingResult) {
+    public String joinAction(@ModelAttribute("joinFormDto") JoinFormDto joinFormDto,
+                             BindingResult bindingResult,
+                             HttpSession session) {
+
+        // 1. 회원 저장
         userService.entitySave(joinFormDto);
-        return "redirect:/login";
+
+        // 2. 방금 가입한 사용자 정보를 가져와 세션에 저장 (자동 로그인 효과)
+        User user = userService.findByUserId(joinFormDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("가입한 유저 정보를 찾을 수 없습니다."));
+
+        session.setAttribute("loginUser", user); //
+
+        // 3. 인덱스로 이동
+        return "redirect:/";
     }
 
     @GetMapping("/logout")

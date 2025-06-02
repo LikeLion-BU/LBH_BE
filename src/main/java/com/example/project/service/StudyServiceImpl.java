@@ -1,32 +1,66 @@
-//package com.example.project.service;
-//
-//import com.example.project.dto.StudyFormDto;
-//import com.example.project.entity.Study;
-//import com.example.project.entity.User;
-//import com.example.project.repository.StudyRepository;
-//import com.example.project.repository.UserRepository;
-//import lombok.*;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class StudyServiceImpl implements StudyService {
-//
-//    private final StudyRepository studyRepository;
-//    private final UserRepository userRepository;
-//
-//    @Override
-//    public void writeStudy(StudyFormDto studyFormDto) {
-//        User user = userRepository.findById(studyFormDto.getUserSequence())
-//                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 없습니다."));
-//
-//        Study study = Study.builder()
-//                .user(user)
-//                .title(studyFormDto.getTitle())
-//                .content(studyFormDto.getContent())
-//                .build();
-//
-//        studyRepository.save(study);
-//    }
-//}
-//
+package com.example.project.service;
+
+import com.example.project.dto.StudyFormDto;
+import com.example.project.entity.Study;
+import com.example.project.entity.User;
+import com.example.project.repository.StudyRepository;
+import com.example.project.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class StudyServiceImpl implements StudyService {
+
+    private final StudyRepository studyRepository;
+    private final UserRepository userRepository;
+
+    @Override
+    @Transactional
+    public void Studysave(StudyFormDto studyFormDto) {
+        User user = userRepository.findById(studyFormDto.getUserSequence())
+                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 없습니다."));
+
+        Study study = Study.builder()
+                .user(user)
+                .title(studyFormDto.getTitle())
+                .content(studyFormDto.getContent())
+                .build();
+
+        studyRepository.save(study);
+    }
+
+    @Override
+    public void saveReview(String title, String content, User user) {
+        Study study = new Study();
+        study.setTitle(title);
+        study.setContent(content);
+        study.setUser(user); // user가 null일 수 있음
+        log.info(String.valueOf(study));
+        studyRepository.save(study);
+    }
+
+    @Override
+    public User findByUser(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
+    }
+
+    @Override
+    public List<Study> findAll() {
+
+        return studyRepository.findAll();
+    }
+
+    @Override
+    public List<Study> getStudiesByUser(User user) {
+        return studyRepository.findByUser(user);
+    }
+}
+

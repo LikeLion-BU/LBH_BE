@@ -47,11 +47,18 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
     @Override
     public Optional<User> login(String userId, String password) {
         return userRepository.findByUserId(userId)
                 .filter(user -> user.getPassword().equals(password));
     }
 
+    // ✅ 추가: userId로 사용자 조회
+    @Override
+    public Optional<User> findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+
+    }
 }
 
