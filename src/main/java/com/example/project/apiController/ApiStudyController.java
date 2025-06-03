@@ -24,48 +24,32 @@ public class ApiStudyController {
     private final StudyService studyService;
     private final UserService userService;
 
-    // 후기 등록 (POST)
-    @PostMapping("/write")
-    public ResponseEntity<?> writeReview(@RequestBody Map<String, String> requestData) {
-        String userId = requestData.get("userId");
-        String title = requestData.get("title");
-        String content = requestData.get("content");
-        Optional<User> userOptional = userService.findByUserId(userId);
-        log.info(String.valueOf(userOptional));
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 사용자입니다.");
-        }
+//    // 후기 등록 (POST)
+//    @PostMapping("/write")
+//    public ResponseEntity<?> writeReview(@RequestBody Map<String, String> requestData) {
+//        String title = requestData.get("title");
+//        String content = requestData.get("content");
+//
+//        // 로그인 없이 작성 허용
+//        studyService.saveReview(title, content, null);  // 작성자 없이 저장
+//        return ResponseEntity.ok("후기 등록 성공");
+//    }
 
-        studyService.saveReview(title, content, userOptional.get());
-        return ResponseEntity.ok("후기 등록 성공");
-    }
-
-    // 사용자 ID로 후기 목록 조회 (GET)
-    @GetMapping("/list/{userId}")
-    public ResponseEntity<?> getUserReviews(@PathVariable String userId) {
-        Optional<User> userOptional = userService.findByUserId(userId);
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다.");
-        }
-
-        List<Study> userReviews = studyService.getStudiesByUser(userOptional.get());
-        return ResponseEntity.ok(userReviews);
+    @GetMapping("/reviews")
+    public ResponseEntity<List<Study>> getAllReviews() {
+        List<Study> allReviews = studyService.getAllStudies();
+        return ResponseEntity.ok(allReviews);
     }
 
     // 전체 후기 목록 조회 (GET)
     @PostMapping("/reviews")
-    public ResponseEntity<?> writeReview(@RequestBody Map<String, String> requestData,
-                                         HttpSession session) {
-        User loginUser = (User) session.getAttribute("loginUser");
-
-        if (loginUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
+    public ResponseEntity<?> writeReviews(@RequestBody Map<String, String> requestData) {
         String title = requestData.get("title");
         String content = requestData.get("content");
 
-        studyService.saveReview(title, content, loginUser);
-        return ResponseEntity.ok("후기 등록 성공");
+        studyService.saveReview(title, content, null);
+
+        // JSON 형식으로 반환
+        return ResponseEntity.ok(Map.of("message", "후기 등록 성공"));
     }
 }

@@ -50,8 +50,13 @@ public class ApiUserController {
 
     @PostMapping("/join")
     public JoinFormDto join(@RequestBody JoinFormDto joinFormDto) {
-//        log.info("회원가입 요청: {}", joinFormDto);
         userService.entitySave(joinFormDto);
         return joinFormDto;
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate(); // 세션 무효화
+        return ResponseEntity.ok().body("로그아웃 성공");
     }
 }

@@ -17,17 +17,10 @@
 
 <!-- 후기 목록 영역 -->
 <div id="reviewListContainer">
-    <div th:if="${#lists.isEmpty(studies)}">
-        <p>아직 작성된 후기가 없습니다.</p>
-    </div>
-
-    <div th:each="study : ${studies}">
-        <hr>
-        <h3 th:text="${study.title}">제목</h3>
-        <p><strong th:text="'작성자: ' + ${study.user.nickname}">작성자</strong></p>
-        <p th:text="${study.content}">내용</p>
-    </div>
+    <p>로딩 중...</p>
 </div>
+
+
 
 <!-- 리뷰 작성 모달 -->
 <div id="reviewModal" class="modal">
@@ -41,34 +34,39 @@
 
 <!-- 스크립트는 항상 body 끝에 -->
 <script>
-    // 모달 열기
-    $('#openReviewModalBtn').on('click', function () {
-        $('#reviewModal').show();
-    });
-
-    // 리뷰 작성 후 Ajax로 서버 전송
-    $('#submitReviewBtn').on('click', function () {
-        const title = $('#reviewTitle').val();
-        const content = $('#reviewContent').val();
-
-        $.ajax({
-            type: 'POST',
-            url: '/write',
-            data: { title, content },
-            success: function () {
-                alert('리뷰가 등록되었습니다.');
-                $('#reviewModal').hide();
-                $('#reviewTitle').val('');
-                $('#reviewContent').val('');
-                refreshReviewList(); // 목록 갱신
-            },
-            error: function (xhr) {
-                alert('등록 실패: ' + xhr.responseText);
-            }
+    $(document).ready(function () {
+        // 모달 열기
+        $('#openReviewModalBtn').on('click', function () {
+            $('#reviewModal').show();
         });
+
+        // 리뷰 작성 버튼 이벤트
+        $('#submitReviewBtn').on('click', function () {
+            const title = $('#reviewTitle').val();
+            const content = $('#reviewContent').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/write',
+                contentType: 'application/json',
+                data: JSON.stringify({ title, content }),
+                success: function () {
+                    alert('리뷰가 등록되었습니다.');
+                    $('#reviewModal').hide();
+                    $('#reviewTitle').val('');
+                    $('#reviewContent').val('');
+                    refreshReviewList();
+                },
+                error: function (xhr) {
+                    alert('등록 실패: ' + xhr.responseText);
+                }
+            });
+        });
+
+        // 리뷰 목록 로딩
+        refreshReviewList();
     });
 
-    // 리뷰 목록 갱신
     function refreshReviewList() {
         $.ajax({
             url: '/reviews',
@@ -81,10 +79,11 @@
                     container.append('<p>아직 작성된 후기가 없습니다.</p>');
                 } else {
                     data.forEach(study => {
+                        const nickname = study.user && study.user.nickname ? study.user.nickname : '익명';
                         container.append(`
                             <hr>
                             <h3>${study.title}</h3>
-                            <p><strong>작성자: ${study.user.nickname}</strong></p>
+                            <p><strong>작성자: ${nickname}</strong></p>
                             <p>${study.content}</p>
                         `);
                     });
@@ -92,11 +91,6 @@
             }
         });
     }
-
-    // 페이지 진입 시 후기 목록 갱신 (선택)
-    $(document).ready(function () {
-        refreshReviewList();
-    });
 </script>
 
 </body>

@@ -62,5 +62,10 @@ public class StudyServiceImpl implements StudyService {
     public List<Study> getStudiesByUser(User user) {
         return studyRepository.findByUser(user);
     }
+
+    @Override
+    public List<Study> getAllStudies() {
+        return studyRepository.findAll();
+    }
 }
 
