@@ -24,32 +24,18 @@ public class ApiStudyController {
     private final StudyService studyService;
     private final UserService userService;
 
-//    // 후기 등록 (POST)
-//    @PostMapping("/write")
-//    public ResponseEntity<?> writeReview(@RequestBody Map<String, String> requestData) {
-//        String title = requestData.get("title");
-//        String content = requestData.get("content");
-//
-//        // 로그인 없이 작성 허용
-//        studyService.saveReview(title, content, null);  // 작성자 없이 저장
-//        return ResponseEntity.ok("후기 등록 성공");
-//    }
-
     @GetMapping("/reviews")
     public ResponseEntity<List<Study>> getAllReviews() {
         List<Study> allReviews = studyService.getAllStudies();
         return ResponseEntity.ok(allReviews);
     }
 
-    // 전체 후기 목록 조회 (GET)
     @PostMapping("/reviews")
     public ResponseEntity<?> writeReviews(@RequestBody Map<String, String> requestData) {
         String title = requestData.get("title");
         String content = requestData.get("content");
 
         studyService.saveReview(title, content, null);
-
-        // JSON 형식으로 반환
         return ResponseEntity.ok(Map.of("message", "후기 등록 성공"));
     }
 }
