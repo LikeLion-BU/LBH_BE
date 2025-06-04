@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -23,32 +24,33 @@ public class StudyController {
     private final StudyService studyService;
 
     @GetMapping("/studyRoom")
-    public String showStudyPage(HttpSession session, Model model) {
-        // 로그인 여부 확인
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login"; //
-        }
-
-        // 로그인 한 유저의 후기 목록 조회
-        List<Study> myStudies = studyService.getStudiesByUser(loginUser);
-        // 모델에 후기 목록 담기
-        model.addAttribute("studies", myStudies);
-
-        return "study/studyRoom"; //
+    public String showStudyPage(Model model) {
+        // 전체 후기 조회 (비회원도 접근 가능)
+        List<Study> allStudies = studyService.getAllStudies();
+        model.addAttribute("studies", allStudies);
+        return "study/studyRoom";
     }
 
-
     @PostMapping("/write")
-    public ResponseEntity<?> submitReview(@RequestParam String title,
-                                          @RequestParam String content) {
+    public ResponseEntity<?> submitReview(@RequestBody Map<String, String> data) {
         try {
-            // 로그인 사용자 없이 익명으로 저장 (user는 null)
+            String title = data.get("title");
+            String content = data.get("content");
+
+            // 익명 유저 허용
             studyService.saveReview(title, content, null);
+
             return ResponseEntity.ok("리뷰 등록 성공");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록 실패");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록 실패: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/reviews")
+    @ResponseBody
+    public List<Study> getAllReviews() {
+        return studyService.getAllStudies();
     }
 
 }

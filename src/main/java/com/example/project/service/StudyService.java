@@ -17,7 +17,9 @@ public interface StudyService {
 
     List<Study> findAll();
 
-    List<Study> getStudiesByUser(User user); // 이거 추가
+    List<Study> getStudiesByUser(User user); //
+
+    public List<Study> getAllStudies();// 이거 추가
 }
 
 

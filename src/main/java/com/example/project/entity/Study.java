@@ -19,7 +19,7 @@ public class Study {
     private Long studySequence;
 
     @ManyToOne
-    @JoinColumn(name = "USER_SEQUENCE") // FK 컬럼
+    @JoinColumn(name = "USER_SEQUENCE", nullable = true) // FK 컬럼
     private User user;
 
     private String title;
